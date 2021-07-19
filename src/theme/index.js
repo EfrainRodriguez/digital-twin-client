@@ -5,7 +5,7 @@ import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import StyledEngineProvider from '@material-ui/core/StyledEngineProvider';
 // hooks
-// import { useSettings } from '../hooks';
+import { useSettings } from '../hooks';
 //
 import shape from './shape';
 import palette from './palette';
@@ -18,9 +18,9 @@ import shadows, { customShadows } from './shadows';
 // ----------------------------------------------------------------------
 
 const ThemeConfig = ({ children }) => {
-  // const { themeMode } = useSettings();
+  const { themeMode } = useSettings();
   const themeDirection = 'ltr';
-  const isLight = true; // themeMode === 'light';
+  const isLight = themeMode === 'light';
 
   const themeOptions = useMemo(
     () => ({

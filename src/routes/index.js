@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 // material
 import { CircularProgress } from '@material-ui/core';
 // layout
-// import DashboardLayout from '../layouts/dashboard';
+import DashboardLayout from '../layouts/dashboard';
 // paths
 import { PATH_HOME } from './paths';
 
@@ -42,6 +42,7 @@ export const routes = [
   {
     exact: true,
     path: PATH_HOME.login,
+    layout: DashboardLayout,
     component: lazy(() => import('../pages/Home'))
   }
 ];
