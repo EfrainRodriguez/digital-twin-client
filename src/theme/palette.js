@@ -6,13 +6,12 @@ function createGradient(color1, color2) {
   return `linear-gradient(to bottom, ${color1}, ${color2})`;
 }
 
-// SETUP COLORS
 const PRIMARY = {
-  lighter: '#E1E5FF',
-  light: '#A7B0FF',
-  main: '#6D79FF',
-  dark: '#363FB7',
-  darker: '#14197A'
+  lighter: '#D6F7FB',
+  light: '#82D0E8',
+  main: '#3085B4',
+  dark: '#184E81',
+  darker: '#092756'
 };
 const SECONDARY = {
   lighter: '#D6E4FF',
