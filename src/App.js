@@ -1,10 +1,14 @@
 import React from 'react';
+// router
+import { BrowserRouter as Router } from 'react-router-dom';
 // theme
 import ThemeConfig from './theme';
 
 const App = () => (
   <ThemeConfig>
-    <h1>Digital Twin App</h1>
+    <Router>
+      <h1>Digital Twin App</h1>
+    </Router>
   </ThemeConfig>
 );
 
