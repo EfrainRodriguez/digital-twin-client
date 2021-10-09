@@ -5,7 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const settingsSlice = createSlice({
   name: 'settings',
   initialState: {
-    themeMode: 'light'
+    themeMode: 'dark'
   },
   reducers: {
     setThemeMode(state, action) {
