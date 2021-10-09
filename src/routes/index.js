@@ -43,6 +43,12 @@ export const routes = [
     exact: true,
     path: PATH_HOME.login,
     layout: DashboardLayout,
-    component: lazy(() => import('../pages/Home'))
+    component: lazy(() => import('../pages/ThreeSimulation'))
+  },
+  {
+    exact: true,
+    path: '/simulation',
+    layout: DashboardLayout,
+    component: lazy(() => import('../pages/ThreeSimulation'))
   }
 ];

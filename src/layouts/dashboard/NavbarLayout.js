@@ -9,10 +9,9 @@ import {
   Hidden,
   Toolbar,
   IconButton,
-  Typography,
   Switch
 } from '@material-ui/core';
-import { Menu } from '@material-ui/icons';
+import { Menu, Brightness4, BrightnessHigh } from '@material-ui/icons';
 // components
 import AccountPopover from './AccountPopover';
 // hooks
@@ -57,9 +56,12 @@ const DashboardNavbar = ({ onOpenSidebar }) => {
         </Hidden>
         <Box sx={{ flexGrow: 1 }} />
         <Box px={4} sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="body2">Light</Typography>
+          {themeMode === 'light' ? (
+            <Brightness4 color="primary" />
+          ) : (
+            <BrightnessHigh color="primary" />
+          )}
           <Switch checked={!(themeMode === 'light')} onChange={toggleMode} />
-          <Typography variant="body2">Dark</Typography>
         </Box>
         <Box>
           <AccountPopover
