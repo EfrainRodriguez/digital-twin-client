@@ -15,14 +15,7 @@ import {
   Box,
   Avatar
 } from '@material-ui/core';
-import {
-  Home,
-  Person,
-  ListAlt,
-  Settings,
-  ThreeDRotation,
-  PowerSettingsNew
-} from '@material-ui/icons';
+import { Home, ThreeDRotation } from '@material-ui/icons';
 // layout
 import SidebarItem from './SidebarItem';
 // paths
@@ -88,23 +81,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
               typography: 'overline'
             }}
           >
-            Punto de ventas
+            Menu
           </ListSubheader>
         }
       >
         <SidebarItem title="Home" href={PATH_HOME.root} icon={<Home />} />
-        <SidebarItem title="Machine List" href="/machines" icon={<ListAlt />} />
         <SidebarItem
           title="3D Simulation"
           href="/simulation"
           icon={<ThreeDRotation />}
-        />
-        <SidebarItem title="Settings" href="/settings" icon={<Settings />} />
-        <SidebarItem title="Profile" href="/profile" icon={<Person />} />
-        <SidebarItem
-          title="Logout"
-          href="/logout"
-          icon={<PowerSettingsNew />}
         />
       </List>
     </>
