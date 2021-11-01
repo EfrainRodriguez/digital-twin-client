@@ -41,14 +41,14 @@ export const renderRoutes = (routes = []) => (
 export const routes = [
   {
     exact: true,
-    path: PATH_HOME.login,
+    path: PATH_HOME.root,
     layout: DashboardLayout,
-    component: lazy(() => import('../pages/ThreeSimulation'))
+    component: lazy(() => import('../pages/MQTTConnection'))
   },
   {
     exact: true,
     path: '/simulation',
     layout: DashboardLayout,
-    component: lazy(() => import('../pages/ThreeSimulation'))
+    component: lazy(() => import('../pages/SimulationContainer'))
   }
 ];

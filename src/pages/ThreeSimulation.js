@@ -1,4 +1,4 @@
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { Canvas, useLoader } from '@react-three/fiber';
 import {
@@ -79,7 +79,7 @@ export const Model = ({ url, position, color }) => {
   );
 };
 
-export default function ThreeSimulation() {
+export default function ThreeSimulation({ client }) {
   const [positions, setPositions] = useState({
     x: 0,
     y: 0,
@@ -89,6 +89,22 @@ export default function ThreeSimulation() {
   const handleAxisChange = (axis, position) => {
     setPositions({ ...positions, [axis]: position });
   };
+
+  useEffect(() => {
+    if (client) {
+      client.on('connect', () => {
+        client.subscribe('test');
+      });
+      client.on('error', (error) => {
+        console.log('error', error);
+        client.end();
+      });
+      client.on('message', (topic, message) => {
+        console.log(message.toString());
+        handleAxisChange('x', message.toString());
+      });
+    }
+  }, [client]);
 
   return (
     <Container sx={{ height: '100%' }}>
