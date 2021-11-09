@@ -1,14 +1,8 @@
-import { Suspense, useRef, useState, useEffect } from 'react';
-import * as THREE from 'three';
-import { Canvas, useLoader } from '@react-three/fiber';
-import {
-  TrackballControls,
-  ContactShadows,
-  Environment
-} from '@react-three/drei';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { Suspense, useState, useEffect } from 'react';
 // prop types
 import PropTypes from 'prop-types';
+// three js
+import { TrackballControls, ContactShadows, Html } from '@react-three/drei';
 // material ui
 import {
   Box,
@@ -16,15 +10,12 @@ import {
   Card,
   styled,
   Container,
+  Button,
+  CircularProgress,
   Typography
 } from '@material-ui/core';
 // components
-import { AxisHandler } from '../components';
-// stl files
-import base from '../assets/models/HaasMiniMill-base.STL';
-import xAxis from '../assets/models/HaasMiniMill-x-axis.STL';
-import yAxis from '../assets/models/HaasMiniMill-y-axis.STL';
-import zAxis from '../assets/models/HaasMiniMill-z-axis.STL';
+import { AxisHandler, HaasMiniMill, ThreeDViewer } from '../components';
 
 // ----------------------------------------------------------------
 
@@ -39,52 +30,14 @@ const ControlBox = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2)
 }));
 
-// ----------------------------------------------------------------
-
-export const Model = ({ url, position, color }) => {
-  const geom = useLoader(STLLoader, url);
-
-  const ref = useRef();
-
-  return (
-    <>
-      <mesh
-        ref={ref}
-        matrixAutoUpdate
-        updateMatrix={() =>
-          (ref.current.matrix = new THREE.Matrix4().set(
-            1,
-            0,
-            0,
-            position[0],
-            0,
-            0,
-            1,
-            position[2],
-            0,
-            -1,
-            0,
-            -position[1],
-            0,
-            0,
-            0,
-            1
-          ))
-        }
-      >
-        <primitive object={geom} attach="geometry" />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </>
-  );
-};
-
 export default function ThreeSimulation({ client }) {
   const [positions, setPositions] = useState({
     x: 0,
     y: 0,
     z: 0
   });
+  const [showEnclosure, setShowEnclosure] = useState(true);
+  const [showDoor, setShowDoor] = useState(true);
 
   const handleAxisChange = (axis, position) => {
     setPositions({ ...positions, [axis]: position });
@@ -101,7 +54,7 @@ export default function ThreeSimulation({ client }) {
       });
       client.on('message', (topic, message) => {
         console.log(message.toString());
-        handleAxisChange('x', message.toString());
+        // handleAxisChange('x', message.toString());
       });
     }
   }, [client]);
@@ -109,11 +62,11 @@ export default function ThreeSimulation({ client }) {
   return (
     <Container sx={{ height: '100%' }}>
       <Grid container spacing={3} height="100%">
-        <Box mb={2} width="100%">
+        {/* <Box mb={2} width="100%">
           <Typography align="center" variant="h2">
             CNC Machine Simulation
           </Typography>
-        </Box>
+        </Box> */}
         <Grid item sm={12} md={4} lg={4}>
           <ControlPanel>
             <ControlBox>
@@ -142,36 +95,38 @@ export default function ThreeSimulation({ client }) {
                 onChange={(e) => handleAxisChange('z', e)}
               />
             </ControlBox>
+            <Grid>
+              <Button onClick={() => setShowEnclosure(!showEnclosure)}>
+                {showEnclosure ? 'Hide enclosure' : 'Show enclosure'}
+              </Button>
+              {showEnclosure && (
+                <Button onClick={() => setShowDoor(!showDoor)}>
+                  {showDoor ? 'Hide door' : 'Show door'}
+                </Button>
+              )}
+            </Grid>
           </ControlPanel>
         </Grid>
         <Grid item sm={12} md={8} lg={8}>
-          <Canvas
-            dpr={[1, 2]}
-            camera={{
-              fov: 35,
-              position: [1500, 1000, 4500],
-              far: 50000
-            }}
-          >
+          <ThreeDViewer>
             {/* <color attach="background" args={['#2a3b4c']} /> */}
-            <Suspense fallback={null}>
-              <Model url={base} position={[0, 0, 0]} color="#BFBFBF" />
-              <Model
-                url={xAxis}
-                position={[positions.x, positions.y, 0]}
-                color="#BFBFBF"
+            <Suspense
+              fallback={
+                <Html>
+                  <Box textAlign="center" minWidth="150px">
+                    <CircularProgress />
+                    <Typography display="block" variant="caption">
+                      loading machine...
+                    </Typography>
+                  </Box>
+                </Html>
+              }
+            >
+              <HaasMiniMill
+                showDoor={showDoor}
+                showEnclosure={showEnclosure}
+                positions={positions}
               />
-              <Model
-                url={yAxis}
-                position={[0, positions.y, 0]}
-                color="#BFBFBF"
-              />
-              <Model
-                url={zAxis}
-                position={[0, 0, positions.z]}
-                color="#BFBFBF"
-              />
-              <Environment preset="city" />
             </Suspense>
             <ContactShadows
               rotation-x={Math.PI / 2}
@@ -183,15 +138,13 @@ export default function ThreeSimulation({ client }) {
               far={4.5}
             />
             <TrackballControls zoomSpeed={5} rotateSpeed={3} />
-          </Canvas>
+          </ThreeDViewer>
         </Grid>
       </Grid>
     </Container>
   );
 }
 
-Model.propTypes = {
-  url: PropTypes.string.isRequired,
-  position: PropTypes.array.isRequired,
-  color: PropTypes.string
+ThreeSimulation.propTypes = {
+  client: PropTypes.object
 };

@@ -1,6 +1,6 @@
 import React, { Fragment, Suspense, lazy } from 'react';
 // router
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 // material
 import { CircularProgress } from '@material-ui/core';
 // layout
@@ -43,12 +43,16 @@ export const routes = [
     exact: true,
     path: PATH_HOME.root,
     layout: DashboardLayout,
-    component: lazy(() => import('../pages/MQTTConnection'))
+    component: lazy(() => import('../pages/Home'))
   },
   {
     exact: true,
     path: '/simulation',
     layout: DashboardLayout,
     component: lazy(() => import('../pages/SimulationContainer'))
+  },
+  {
+    path: '/',
+    component: () => <Redirect to="/simulation" />
   }
 ];
