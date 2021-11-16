@@ -6,3 +6,4 @@ export { LoadFrom3MF } from './model-loaders';
 export { HaasMiniMill } from './machines';
 // threeD components
 export { default as ThreeDViewer } from './ThreeDViewer';
+export { Workpiece, RawPiece } from './workpiece';

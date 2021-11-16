@@ -2,6 +2,7 @@ import { Suspense, useState, useEffect } from 'react';
 // prop types
 import PropTypes from 'prop-types';
 // three js
+import * as THREE from 'three';
 import { TrackballControls, ContactShadows, Html } from '@react-three/drei';
 // material ui
 import {
@@ -15,7 +16,13 @@ import {
   Typography
 } from '@material-ui/core';
 // components
-import { AxisHandler, HaasMiniMill, ThreeDViewer } from '../components';
+import {
+  AxisHandler,
+  HaasMiniMill,
+  ThreeDViewer,
+  Workpiece,
+  RawPiece
+} from '../components';
 
 // ----------------------------------------------------------------
 
@@ -38,6 +45,8 @@ export default function ThreeSimulation({ client }) {
   });
   const [showEnclosure, setShowEnclosure] = useState(true);
   const [showDoor, setShowDoor] = useState(true);
+  const [showRawpiece, setShowRawpiece] = useState(false);
+  const [showWokpiece, setShowWorkpiece] = useState(false);
 
   const handleAxisChange = (axis, position) => {
     setPositions({ ...positions, [axis]: position });
@@ -46,7 +55,8 @@ export default function ThreeSimulation({ client }) {
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        client.subscribe('test');
+        // client.subscribe('test');
+        client.subscribe('haas/minimill/position');
       });
       client.on('error', (error) => {
         console.log('error', error);
@@ -54,7 +64,12 @@ export default function ThreeSimulation({ client }) {
       });
       client.on('message', (topic, message) => {
         console.log(message.toString());
-        // handleAxisChange('x', message.toString());
+        // handleAxisChange('x', message.toString().split(';')[0]);
+        setPositions({
+          x: message.toString().split(';')[0],
+          y: message.toString().split(';')[1],
+          z: message.toString().split(';')[2] + 300
+        });
       });
     }
   }, [client]);
@@ -71,25 +86,25 @@ export default function ThreeSimulation({ client }) {
           <ControlPanel>
             <ControlBox>
               <AxisHandler
-                min={-600}
-                max={200}
+                min={-350}
+                max={70}
                 label="X-Axis"
                 onChange={(e) => handleAxisChange('x', -e)}
               />
             </ControlBox>
             <ControlBox>
               <AxisHandler
-                min={-300}
+                min={-400}
                 max={100}
                 label="Y-Axis"
                 buttonText="Y"
-                onChange={(e) => handleAxisChange('y', -e)}
+                onChange={(e) => handleAxisChange('y', e)}
               />
             </ControlBox>
             <ControlBox>
               <AxisHandler
-                min={-250}
-                max={100}
+                min={-50}
+                max={250}
                 label="Z-Axis"
                 buttonText="Z"
                 onChange={(e) => handleAxisChange('z', e)}
@@ -104,6 +119,14 @@ export default function ThreeSimulation({ client }) {
                   {showDoor ? 'Hide door' : 'Show door'}
                 </Button>
               )}
+            </Grid>
+            <Grid>
+              <Button onClick={() => setShowWorkpiece(!showWokpiece)}>
+                {showWokpiece ? 'Hide workpiece' : 'Show workpiece'}
+              </Button>
+              <Button onClick={() => setShowRawpiece(!showRawpiece)}>
+                {showRawpiece ? 'Hide rawpiece' : 'Show rawpiece'}
+              </Button>
             </Grid>
           </ControlPanel>
         </Grid>
@@ -127,6 +150,50 @@ export default function ThreeSimulation({ client }) {
                 showEnclosure={showEnclosure}
                 positions={positions}
               />
+              {showWokpiece && (
+                <Workpiece
+                  matrix={new THREE.Matrix4().set(
+                    1,
+                    0,
+                    0,
+                    positions.x,
+                    0,
+                    0,
+                    1,
+                    966.5,
+                    0,
+                    -1,
+                    0,
+                    300 + positions.y,
+                    0,
+                    0,
+                    0,
+                    1
+                  )}
+                />
+              )}
+              {showRawpiece && (
+                <RawPiece
+                  matrix={new THREE.Matrix4().set(
+                    1,
+                    0,
+                    0,
+                    positions.x,
+                    0,
+                    0,
+                    1,
+                    966.5,
+                    0,
+                    -1,
+                    0,
+                    300 + positions.y,
+                    0,
+                    0,
+                    0,
+                    1
+                  )}
+                />
+              )}
             </Suspense>
             <ContactShadows
               rotation-x={Math.PI / 2}
